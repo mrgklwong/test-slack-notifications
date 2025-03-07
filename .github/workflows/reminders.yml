@@ -1,0 +1,29 @@
+name: Daily Slack Reminders
+
+on:
+  schedule:
+    # Runs daily at 9 AM UTC (adjust cron syntax as needed)
+    - cron: "0 9 * * *"
+  workflow_dispatch:  # Allow manual triggers
+
+jobs:
+  send-reminders:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set Up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: |
+          pip install pandas openpyxl requests
+
+      - name: Run Reminder Script
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: python slack_birthday_bot.py
